@@ -14,7 +14,6 @@ use strict;
 ## hash of arrays of hashes rather than a simple
 ## hash of hashes.
 
-## test how to parse features
 
 my %functions = (
     "join" => \&parse_operations,
@@ -607,12 +606,12 @@ sub genetic_code {
 			      "GCA"=>"A",  "GCG"=>"A",  "GAT"=>"D",  "GAC"=>"D",  "GAA"=>"E",  "GAG"=>"E",
 			      "GGT"=>"G",  "GGC"=>"G",  "GGA"=>"G",  "GGG"=>"G" );
     
+    if($code < 0){
+	return(%gcode);
+    }
     if(!defined($gcode{$code})){
 	print STDERR "No code defined for $code\nWill use standard code instead\n";
 	$code = "1";
-    }
-    if($code < 0){
-	return(%gcode);
     }
     return( %{$gcode{$code}} );
 }

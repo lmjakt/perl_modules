@@ -41,31 +41,3 @@ sub extract_key {
     return($web, $key);
 }
     
-
-# $db="nucleotide";
-# $query=$seq_id;
-
-# $url=$base . "esearch.fcgi?db=$db&term=$query&usehistory=y";
-
-# $output = get($url);
-# print "output:\n$output\n\n";
-
-# ## parse the webenv and query key?
-# $web = $1 if ($output =~ /<WebEnv>(\S+)<\/WebEnv>/);
-# $key = $1 if ($output =~ /<QueryKey>(\d+)<\/QueryKey>/);
-
-# ## summary url:
-# $url = $base . "esummary.fcgi?db=$db&query_key=$key&WebEnv=$web";
-
-# ## get the summary:
-# $docsums = get($url);
-# print $docsums;
-
-# $url = $base . "efetch.fcgi?db=$db&query_key=$key&WebEnv=$web";
-# $url .= "&rettype=gb&retmode=text";
-# ## get more:
-# $data = get($url);
-
-# open(OUT, ">gb_seq_data.gb") || die "unable to open gb_seq_data.gb $!\n";
-# print OUT "$data";
-# close(OUT);
