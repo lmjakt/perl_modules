@@ -13,16 +13,34 @@ These modules have only been tested for my own use-cases.
 Provides a single function:
 
 ```perl
-download_records( search_term, db, ret_type, retmode );
+download_records( search_term, db, ret_type, retmode api_key );
 ```
 
 Downloads records associated with the `search_term` and `db`.
 The `search_term` is the only mandatory argument; the others
 default to, `nucleotide`, `gb` and `text`.
 
-I have used this function to download genbank entries specified by accession
-and it seems to work for that. I have not tested it for any other
-purpose.
+If you have an NCBI web api key then you can pass this as the last argument
+to download_records and it will be used appropriately. If you do not specify
+the api key the module will first check the environment variable `NCBI_API_KEY`
+and then look for the value in the files `~/.ncbi.conf` and `~/ncbi/ncbi.conf`.
+The module will search for instances of:
+
+``` sh
+api_key=<value>
+```
+
+The module will read parameter values from all lines fitting the
+`key=value` pattern, but the only value used at the moment is the
+api_key value.
+
+The function should still work if you do not have a key, but note that
+you should make sure to not make more than 3 queries per second to
+NCBI. Failing to do so may get your IP blacklisted.
+
+I have used this function to download genbank entries specified by
+accession and it seems to work for that. I have not tested it for any
+other purpose. 
 
 Relies on the `LWP` package.
 

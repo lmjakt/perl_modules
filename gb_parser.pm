@@ -121,9 +121,10 @@ sub read_features {
 	    $sep = "";
 	    next;
 	}
-	if( $lines->[$j] =~ m#^\s{21}/([^=]+)=(.+)# ){
+	if( $lines->[$j] =~ m#^\s{21}/([^=]+)=?(.*)# ){
 	    my $key2 = $1;
 	    my $value = $2;
+	    ## note that $value can be an empty string.
 	    unquote( $value_ref );
 	    $feat_ref->{$key}[-1]{$key2} = $value;
 	    $value_ref = \$feat_ref->{$key}[-1]{$key2};
@@ -140,7 +141,7 @@ sub read_features {
 
 sub extract_feature_seq {
     my($feat_r, $seq_r, $type) = @_;
-    return(0) if !defined($feat_r->{$type});
+    return if !defined($feat_r->{$type});
     my @seq_data = ();
     for my $hash_r( @{$feat_r->{$type}} ){
 	my $range_term = $hash_r->{range};
@@ -157,6 +158,8 @@ sub extract_feature_seq {
 sub read_sequence {
     my($lines, $i) = @_;
     my $sequence = "";
+    ## some gebank entries appear to be truncated.
+    return($sequence) if $i >= @{$lines};
     $i++ if($lines->[$i] =~ /ORIGIN/);
     while($i < @{$lines} && $lines->[$i] !~ m#^//#){
 	chomp($lines->[$i]);
@@ -169,13 +172,13 @@ sub read_sequence {
 ## should only take a single range,
 sub extract_range {
     my($range, $string) = @_;
-    if($range =~ /^(\d+)&/){
+    if($range =~ /^<?(\d+)>?$/){
 	return(substr( $string, $1, 1 ));
     }
     if($range =~ /^<?(\d+)\.\.>?(\d+)>?$/){
 	return(substr( $string, $1-1, 1 + $2-$1 ));
     }
-    die "Unexpected range term: $range\n";    
+    die "Unexpected range term: |$range|\n";    
 }
 
 sub complement {
@@ -243,7 +246,7 @@ sub extract_argument {
 sub extract_br_contents {
     my $op = shift @_;
     $op =~ s/^[^(]+\(//;
-    $op =~ s/\($//;
+    $op =~ s/\)$//;
     return($op);
 }
 
@@ -254,7 +257,6 @@ sub translate_peptide {
     my($seq, $frame, $code) = @_;
     $seq = uc($seq);
     $frame--;
-    print "frame is $frame\n";
     my $aa = "";
     my %gene_code = genetic_code($code);
     my %gcode = %{$gene_code{code}};
@@ -266,7 +268,6 @@ sub translate_peptide {
 	    $aa .= "X";
 	}
     }
-    print "\n";
     return($aa);
 }
 
